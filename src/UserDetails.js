@@ -102,7 +102,7 @@ class UserDetails extends React.Component {
                     <Tooltip title="Edit">
                       <IconButton
                         aria-label="edit"
-                        onClick={() => this.props.editUser(index)}
+                        onClick={() => this.props.editUser(user, index)}
                       >
                         <EditIcon color="primary" />
                       </IconButton>
