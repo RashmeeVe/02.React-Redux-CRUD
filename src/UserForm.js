@@ -32,14 +32,59 @@ const styles = {
 };
 
 class UserForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      errorEmployeeName: "",
+      errorEmployeeAge: "",
+      empCode: "",
+      empName: "",
+      empAge: "",
+      empProfession: "",
+    };
+  }
+
   handleFormEntries = (event) => {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
+    // this.setState({ [name]: value });
+    // return true;
+    let errorEmployeeAge, errorEmployeeName;
+    if (name === "empName" && !value.match(/^[a-zA-Z ]+$/)) {
+      errorEmployeeName = "Enter Characters Only";
+    }
+
+    if (name === "empAge" && !value.match(/^[0-9]+$/)) {
+      errorEmployeeAge = "Enter Numbers Only";
+    }
+
+    if (name === "empAge" && value > 99) {
+      errorEmployeeAge = "Age should be less than 99";
+    }
+
+    this.setState({ [name]: value, errorEmployeeAge, errorEmployeeName });
     return true;
   };
 
-  addUser = (event) => {
+  handleCreateUpdateUser = (event) => {
     event.preventDefault();
+    const { empCode, empName, empAge, empProfession } = this.state;
+    if (
+      empCode.trim() === "" ||
+      empName.trim() === "" ||
+      empAge.trim() === "" ||
+      empProfession.trim() === "" ||
+      empAge > 99 ||
+      !empAge.match(/^[0-9]+$/) ||
+      !empName.match(/^[a-zA-Z ]+$/)
+    ) {
+      return;
+    } else {
+      const { indexOfIdToEdit } = this.props;
+      indexOfIdToEdit > -1 ? this.updateUser() : this.addUser();
+    }
+  };
+
+  addUser = () => {
     const { empCode, empName, empAge, empProfession } = this.state;
 
     store.dispatch({
@@ -54,8 +99,7 @@ class UserForm extends React.Component {
     this.props.handleCloseUserFormDialog();
   };
 
-  updateUser = (event) => {
-    event.preventDefault();
+  updateUser = () => {
     const { empCode, empName, empAge, empProfession } = this.state;
     const { indexOfIdToEdit } = this.props;
     store.dispatch({
@@ -73,6 +117,9 @@ class UserForm extends React.Component {
 
   render() {
     const { fullScreen, classes, indexOfIdToEdit, users } = this.props;
+
+    const { errorEmployeeAge, errorEmployeeName } = this.state;
+
     let empCode, empName, empAge, empProfession;
     if (indexOfIdToEdit > -1) {
       empCode = users[indexOfIdToEdit].empCode;
@@ -95,7 +142,8 @@ class UserForm extends React.Component {
         <DialogTitle id="responsive-dialog-title">
           {indexOfIdToEdit > -1 ? "Update User" : "Create User"}
         </DialogTitle>
-        <form onSubmit={indexOfIdToEdit > -1 ? this.updateUser : this.addUser}>
+        <form onSubmit={this.handleCreateUpdateUser}>
+          {/* <form onSubmit={indexOfIdToEdit > -1 ? this.updateUser : this.addUser}> */}
           <DialogContent>
             <DialogContentText>Enter User Details</DialogContentText>
             <div className={classes.TextFieldContainerDiv}>
@@ -119,7 +167,10 @@ class UserForm extends React.Component {
                   multiline
                   defaultValue={empName}
                   onChange={this.handleFormEntries}
-                  label="Employee Name"
+                  label={
+                    errorEmployeeName ? errorEmployeeName : "Employee Name"
+                  }
+                  error={errorEmployeeName ? true : false}
                 />
               </div>
 
@@ -132,7 +183,8 @@ class UserForm extends React.Component {
                   className={classes.CreateUpdateUserFormFields}
                   defaultValue={empAge}
                   onChange={this.handleFormEntries}
-                  label="Employee Age"
+                  label={errorEmployeeAge ? errorEmployeeAge : "Employee Age"}
+                  error={errorEmployeeAge ? true : false}
                 />
               </div>
 
