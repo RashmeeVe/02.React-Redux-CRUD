@@ -13,6 +13,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import { withStyles } from "@material-ui/styles";
 import TextField from "@material-ui/core/TextField";
+import store from "./store";
+import * as actions from "./actionTypes";
 
 const styles = {
   TextFieldDivs: {
@@ -30,6 +32,45 @@ const styles = {
 };
 
 class UserForm extends React.Component {
+  handleFormEntries = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+    return true;
+  };
+
+  addUser = (event) => {
+    event.preventDefault();
+    const { empCode, empName, empAge, empProfession } = this.state;
+
+    store.dispatch({
+      type: actions.ADD_USER,
+      payload: {
+        empCode: empCode,
+        empName: empName,
+        empAge: empAge,
+        empProfession: empProfession,
+      },
+    });
+    this.props.handleCloseUserFormDialog();
+  };
+
+  updateUser = (event) => {
+    event.preventDefault();
+    const { empCode, empName, empAge, empProfession } = this.state;
+    const { indexOfIdToEdit } = this.props;
+    store.dispatch({
+      type: actions.UPDATE_USER,
+      payload: {
+        indexOfIdToEdit: indexOfIdToEdit,
+        empCode: empCode,
+        empName: empName,
+        empAge: empAge,
+        empProfession: empProfession,
+      },
+    });
+    this.props.handleCloseUserFormDialog();
+  };
+
   render() {
     const { fullScreen, classes, indexOfIdToEdit, users } = this.props;
     let empCode, empName, empAge, empProfession;
@@ -54,11 +95,7 @@ class UserForm extends React.Component {
         <DialogTitle id="responsive-dialog-title">
           {indexOfIdToEdit > -1 ? "Update User" : "Create User"}
         </DialogTitle>
-        <form
-          onSubmit={
-            indexOfIdToEdit > -1 ? this.props.updateUser : this.props.addUser
-          }
-        >
+        <form onSubmit={indexOfIdToEdit > -1 ? this.updateUser : this.addUser}>
           <DialogContent>
             <DialogContentText>Enter User Details</DialogContentText>
             <div className={classes.TextFieldContainerDiv}>
@@ -69,7 +106,7 @@ class UserForm extends React.Component {
                   variant="outlined"
                   className={classes.CreateUpdateUserFormFields}
                   defaultValue={empCode}
-                  onChange={this.props.handleFormEntries}
+                  onChange={this.handleFormEntries}
                   label="Employee Code"
                 />
               </div>
@@ -81,7 +118,7 @@ class UserForm extends React.Component {
                   className={classes.CreateUpdateUserFormFields}
                   multiline
                   defaultValue={empName}
-                  onChange={this.props.handleFormEntries}
+                  onChange={this.handleFormEntries}
                   label="Employee Name"
                 />
               </div>
@@ -94,7 +131,7 @@ class UserForm extends React.Component {
                   type="number"
                   className={classes.CreateUpdateUserFormFields}
                   defaultValue={empAge}
-                  onChange={this.props.handleFormEntries}
+                  onChange={this.handleFormEntries}
                   label="Employee Age"
                 />
               </div>
@@ -115,7 +152,7 @@ class UserForm extends React.Component {
                       name: "empProfession",
                       id: "outlined-profession-native-simple",
                     }}
-                    onChange={this.props.handleFormEntries}
+                    onChange={this.handleFormEntries}
                     label="Profession"
                   >
                     <option aria-label="None" value="" />
