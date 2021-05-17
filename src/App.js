@@ -35,8 +35,9 @@ class App extends React.Component {
     this.handleOpenUserFormDialog();
   };
 
-  editUser = (indexOfIdToEdit) => {
-    this.setState({ indexOfIdToEdit });
+  editUser = (user, indexOfIdToEdit) => {
+    const { empCode, empName, empAge, empProfession } = user;
+    this.setState({ empCode, empName, empAge, empProfession, indexOfIdToEdit });
     this.handleOpenUserFormDialog();
   };
 
@@ -60,6 +61,7 @@ class App extends React.Component {
             isUserFormDialogOpen={isUserFormDialogOpen}
             indexOfIdToEdit={indexOfIdToEdit}
             handleCloseUserFormDialog={this.handleCloseUserFormDialog}
+            state={this.state}
           />
         )}
         <UserDetails editUser={this.editUser} />
