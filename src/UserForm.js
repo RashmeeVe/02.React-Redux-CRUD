@@ -34,13 +34,16 @@ const styles = {
 class UserForm extends React.Component {
   constructor(props) {
     super(props);
+
+    const { empCode, empName, empAge, empProfession } = this.props.state;
+
     this.state = {
       errorEmployeeName: "",
       errorEmployeeAge: "",
-      empCode: "",
-      empName: "",
-      empAge: "",
-      empProfession: "",
+      empCode: empCode,
+      empName: empName,
+      empAge: empAge,
+      empProfession: empProfession,
     };
   }
 
@@ -132,6 +135,7 @@ class UserForm extends React.Component {
       empAge = "";
       empProfession = "";
     }
+
     return (
       <Dialog
         fullScreen={fullScreen}
