@@ -24,20 +24,26 @@ class App extends React.Component {
     this.setState({ isUserFormDialogOpen: false, indexOfIdToEdit: -1 });
   };
 
-  setStateValues = () => {
-    this.setState({
-      empCode: "",
-      empName: "",
-      empAge: "",
-      empProfession: "",
-      indexToUpdateUser: -1,
-    });
-    this.handleOpenUserFormDialog();
-  };
+  setStateValues = (user, indexOfIdToEdit) => {
+    if (!indexOfIdToEdit) {
+      this.setState({
+        empCode: "",
+        empName: "",
+        empAge: "",
+        empProfession: "",
+        indexToUpdateUser: -1,
+      });
+    } else {
+      const { empCode, empName, empAge, empProfession } = user;
+      this.setState({
+        empCode,
+        empName,
+        empAge,
+        empProfession,
+        indexOfIdToEdit,
+      });
+    }
 
-  editUser = (user, indexOfIdToEdit) => {
-    const { empCode, empName, empAge, empProfession } = user;
-    this.setState({ empCode, empName, empAge, empProfession, indexOfIdToEdit });
     this.handleOpenUserFormDialog();
   };
 
@@ -64,7 +70,8 @@ class App extends React.Component {
             state={this.state}
           />
         )}
-        <UserDetails editUser={this.editUser} />
+        {/* <UserDetails editUser={this.editUser} /> */}
+        <UserDetails editUser={this.setStateValues} />
       </div>
     );
   }
